@@ -80,7 +80,7 @@ mot/
 │   ├── main/          # Electron main process
 │   ├── renderer/      # React components
 │   └── preload/       # IPC communication
-├── public/            # Static assets
+├── resources/            # Static assets
 ├── types/             # TypeScript definitions
 └── electron.vite.config.ts # Build configuration
 ```
@@ -91,7 +91,7 @@ mot/
 - **Whiteboarding**: tldraw v3.4+
 - **State Management**: React Context API
 - **Routing**: React Router v6
-- **UI Components**: Radix UI Primitives
+- **UI Components**: Shadcn
 - **Styling**: Tailwind CSS with Animate
 - **Build System**: electron-vite
 
