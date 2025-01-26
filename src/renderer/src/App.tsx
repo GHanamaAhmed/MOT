@@ -1,33 +1,27 @@
 import React from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import AuthenticationPage, { UserAuthForm } from './components/login-form'
-import Editor from './components/editor'
-import TldrawProvider from './components/TldrawProvider'
+import { ClerkProvider } from '@clerk/clerk-react'
+import { ToastProvider } from '@renderer/components/ui/toast'
+import Routes from './routes'
+import { Toaster } from './components/ui/toaster'
+import { BrowserRouter } from 'react-router-dom'
+import ProjectContextProvider from './contexts/project'
+const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
+
+if (!PUBLISHABLE_KEY) {
+  throw new Error('Missing Publishable Key')
+}
+
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <div className="w-full h-screen flex justify-center items-center">
-              <AuthenticationPage />
-            </div>
-          }
-        />
-        <Route
-          path="/Editor"
-          element={
-            <>
-              <div style={{ position: 'fixed', inset: 0 }}>
-                <TldrawProvider>
-                  <Editor />
-                </TldrawProvider>
-              </div>
-            </>
-          }
-        />
-      </Routes>
-    </BrowserRouter>
+    <ProjectContextProvider>
+      <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/sign-in">
+        <ToastProvider>
+          <BrowserRouter>
+            <Routes />
+          </BrowserRouter>
+          <Toaster />
+        </ToastProvider>
+      </ClerkProvider>
+    </ProjectContextProvider>
   )
 }

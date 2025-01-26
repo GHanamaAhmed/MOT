@@ -2,12 +2,13 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import { dialog } from 'electron/main'
 
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 1100,
-    height: 670,
+    width: 350,
+    height: 580,
     show: false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
@@ -17,7 +18,7 @@ function createWindow(): void {
     }
   })
   // dev tools
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
   })
@@ -50,9 +51,46 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  // IPC test
-  ipcMain.on('ping', () => console.log('pong'))
+  ipcMain.on('window-change', async (event, { width, height }) => {
+    const window = BrowserWindow.getFocusedWindow()
+    if (!window) return
+    window.setSize(width, height)
+    window.center()
+  })
 
+  ipcMain.on('signOut', () => {
+    const oldWindow = BrowserWindow.getFocusedWindow()
+    if (!oldWindow) return
+    const newWindow = new BrowserWindow({
+      width: 350,
+      height: 580,
+      show: false,
+      autoHideMenuBar: true,
+      ...(process.platform === 'linux' ? { icon } : {}),
+      webPreferences: {
+        preload: join(__dirname, '../preload/index.js'),
+        sandbox: false
+      }
+    })
+
+    newWindow.on('ready-to-show', () => {
+      oldWindow.destroy()
+      newWindow.show()
+      newWindow.center()
+    })
+    newWindow.webContents.setWindowOpenHandler((details) => {
+      shell.openExternal(details.url)
+      return { action: 'deny' }
+    })
+
+    // HMR for renderer base on electron-vite cli.
+    // Load the remote URL for development or the local html file for production.
+    if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+      newWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
+    } else {
+      newWindow.loadFile(join(__dirname, '../renderer/index.html'))
+    }
+  })
   createWindow()
 
   app.on('activate', function () {

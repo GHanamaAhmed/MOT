@@ -1,14 +1,44 @@
-import { useEffect } from 'react'
+import { projectContext } from '@renderer/contexts/project'
+import { ArrowLeftIcon } from 'lucide-react'
+import { useEffect, memo, useContext } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import {
+  DefaultActionsMenu,
+  DefaultActionsMenuContent,
+  DefaultColorStyle,
+  DefaultContextMenu,
+  DefaultContextMenuContent,
+  DefaultDebugMenu,
+  DefaultDebugMenuContent,
+  DefaultHelpMenu,
+  DefaultHelpMenuContent,
+  DefaultKeyboardShortcutsDialog,
+  DefaultKeyboardShortcutsDialogContent,
+  DefaultMainMenu,
+  DefaultMainMenuContent,
+  DefaultPageMenu,
+  DefaultQuickActions,
+  DefaultQuickActionsContent,
   DefaultStylePanel,
   DefaultStylePanelContent,
   DefaultToolbar,
+  DefaultToolbarContent,
+  DefaultZoomMenu,
+  DefaultZoomMenuContent,
+  TLComponents,
+  Tldraw,
+  TldrawUiButton,
+  TldrawUiButtonLabel,
+  TldrawUiMenuGroup,
   TldrawUiMenuItem,
+  TLUiContextMenuProps,
+  TLUiKeyboardShortcutsDialogProps,
+  TLUiStylePanelProps,
   track,
   useEditor,
+  useIsToolSelected,
   useRelevantStyles,
-  useTools,
-  TldrawUiButton
+  useTools
 } from 'tldraw'
 import 'tldraw/tldraw.css'
 function Editor(): JSX.Element {
@@ -21,9 +51,13 @@ export default Editor
 const CustomUi = track(() => {
   const editor = useEditor()
   const tools = useTools()
-
+  const { pathname } = useLocation()
+  const navigate = useNavigate()
   const styles = useRelevantStyles()
+  const { setProject } = useContext(projectContext)
+
   useEffect(() => {
+    localStorage.setItem('pathname', pathname)
     const handleKeyUp = (e: KeyboardEvent) => {
       switch (e.key) {
         case 'Delete':
@@ -33,28 +67,37 @@ const CustomUi = track(() => {
         }
       }
     }
-
     window.addEventListener('keyup', handleKeyUp)
     return () => {
       window.removeEventListener('keyup', handleKeyUp)
     }
-  })
+  }, [])
 
   return (
     <>
-      {/* <div className="absolute right-8 top-1/2 -translate-y-3/4">
+      <div className="absolute left-0 -8 top-1/2 -translate-y-3/4">
         <DefaultStylePanel>
           <DefaultStylePanelContent styles={styles} />
         </DefaultStylePanel>
-      </div> */}
+      </div>
       <div className="absolute left-1/2 -translate-x-1/2 top-8">
         <DefaultToolbar>
-          <TldrawUiMenuItem {...tools['select'] }  />
+          <TldrawUiButton
+            type="tool"
+            title="Return"
+            onClick={() => {
+              setProject(undefined)
+              navigate('/dashboard')
+            }}
+          >
+            <ArrowLeftIcon className="h-5 w-5" /> {/* Adjust size as needed */}
+          </TldrawUiButton>
+          <TldrawUiMenuItem {...tools['select']} />
           <TldrawUiMenuItem {...tools['hand']} />
           <TldrawUiMenuItem {...tools['eraser']} />
           <TldrawUiMenuItem {...tools['ellipse']} label={'Procedure'} />
-          <TldrawUiMenuItem {...tools['rectangle']}label={'Concept'}  />
-          <TldrawUiMenuItem {...tools['hexagon']} label={"Princip"}/>
+          <TldrawUiMenuItem {...tools['rectangle']} label={'Concept'} />
+          <TldrawUiMenuItem {...tools['hexagon']} label={'Princip'} />
           <TldrawUiMenuItem {...tools['arrow']} />
           <TldrawUiButton
             type="tool"
@@ -62,27 +105,38 @@ const CustomUi = track(() => {
             onClick={() => {
               editor.setCursor({ type: 'cross' })
 
-              const fn = (e) => {
-                const { x, y } = editor.screenToPage({ x: e.point.x, y: e.point.y })
-                if (e.name == 'pointer_down') {
+              const handleEvent = (e) => {
+                if (e.name === 'pointer_down') {
+                  // Convert screen coordinates to page coordinates
+                  const { x, y } = editor.screenToPage({ x: e.point.x, y: e.point.y })
+
+                  // Create a rectangle shape at the clicked position
                   editor.createShapes([
                     {
                       type: 'geo',
-                      x: x - 100,
+                      x: x - 100, // Center the shape around the click position
                       y: y - 100,
                       props: {
-                        geo: 'rectangle',
-                        w: 200,
-                        h: 200,
-                        dash: 'dashed'
+                        geo: 'rectangle', // Set the shape type to rectangle
+                        w: 200, // Width of the rectangle
+                        h: 200, // Height of the rectangle
+                        dash: 'dashed' // Dashed border
                       }
                     }
                   ])
+
+                  // Remove the event listener immediately after handling the pointer_down event
+                  editor.removeListener('event', handleEvent)
                 }
-                setTimeout(() => editor.removeListener('event', fn), 500)
-                if (e.type == 'click') editor.setCursor({ type: 'default' })
+
+                // Reset the cursor to default on click
+                if (e.type === 'click') {
+                  editor.setCursor({ type: 'default' })
+                }
               }
-              editor.addListener('event', fn)
+
+              // Add the event listener
+              editor.addListener('event', handleEvent)
             }}
           >
             {' '}
@@ -108,13 +162,16 @@ const CustomUi = track(() => {
             onClick={() => {
               editor.setCursor({ type: 'cross' })
 
-              const fn = (e) => {
-                const { x, y } = editor.screenToPage({ x: e.point.x, y: e.point.y })
-                if (e.name == 'pointer_down') {
+              const handleEvent = (e) => {
+                if (e.name === 'pointer_down') {
+                  // Get the page coordinates from the screen coordinates
+                  const { x, y } = editor.screenToPage({ x: e.point.x, y: e.point.y })
+
+                  // Create a shape at the clicked position
                   editor.createShapes([
                     {
                       type: 'geo',
-                      x: x - 100,
+                      x: x - 100, // Adjust the position to center the shape
                       y: y - 100,
                       props: {
                         geo: 'ellipse',
@@ -124,11 +181,19 @@ const CustomUi = track(() => {
                       }
                     }
                   ])
+
+                  // Remove the event listener after handling the pointer_down event
+                  editor.removeListener('event', handleEvent)
                 }
-                setTimeout(() => editor.removeListener('event', fn), 500)
-                if (e.type == 'click') editor.setCursor({ type: 'default' })
+
+                // Reset the cursor to default on click
+                if (e.type === 'click') {
+                  editor.setCursor({ type: 'default' })
+                }
               }
-              editor.addListener('event', fn)
+
+              // Add the event listener
+              editor.addListener('event', handleEvent)
             }}
           >
             {' '}
@@ -205,30 +270,41 @@ const CustomUi = track(() => {
             type="tool"
             title="Enonce"
             onClick={() => {
+              // Set the cursor to 'cross' to indicate drawing mode
               editor.setCursor({ type: 'cross' })
 
-              const fn = (e) => {
-                const { x, y } = editor.screenToPage({ x: e.point.x, y: e.point.y })
+              const handleEvent = (e) => {
+                if (e.name === 'pointer_down') {
+                  // Convert screen coordinates to page coordinates
+                  const { x, y } = editor.screenToPage({ x: e.point.x, y: e.point.y })
 
-                if (e.name == 'pointer_down') {
+                  // Create a hexagon shape at the clicked position
                   editor.createShapes([
                     {
                       type: 'geo',
-                      x: x - 100,
+                      x: x - 100, // Center the shape around the click position
                       y: y - 100,
                       props: {
-                        geo: 'hexagon',
-                        w: 200,
-                        h: 200,
-                        dash: 'dashed'
+                        geo: 'hexagon', // Set the shape type to hexagon
+                        w: 200, // Width of the hexagon
+                        h: 200, // Height of the hexagon
+                        dash: 'dashed' // Dashed border
                       }
                     }
                   ])
+
+                  // Remove the event listener immediately after handling the pointer_down event
+                  editor.removeListener('event', handleEvent)
                 }
-                setTimeout(() => editor.removeListener('event', fn), 500)
-                if (e.type == 'click') editor.setCursor({ type: 'default' })
+
+                // Reset the cursor to default on click
+                if (e.type === 'click') {
+                  editor.setCursor({ type: 'default' })
+                }
               }
-              editor.addListener('event', fn)
+
+              // Add the event listener
+              editor.addListener('event', handleEvent)
             }}
           >
             {' '}
