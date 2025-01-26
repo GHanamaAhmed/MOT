@@ -73,6 +73,17 @@ body,
   margin: 0 auto !important;
 }
 
+.cl-internal-17dpwu0 {
+  width: 100%;
+  max-width: none;
+  border-width: 0px;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.tl-watermark_SEE-LICENSE {
+  visibility: hidden;
+}
 @layer base {
   :root {
     --background: 0 0% 100%;

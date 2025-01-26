@@ -1,4 +1,4 @@
-import { Plus } from 'lucide-react'
+import { Loader2, Plus } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -9,20 +9,58 @@ import {
 import { Button } from '@renderer/components/ui/button'
 import { Input } from '@renderer/components/ui/input'
 import { Label } from '@renderer/components/ui/label'
-import React from 'react'
+import React, { useContext } from 'react'
 import { Card } from './ui/card'
 
-// Add this component inside your Dashboard component
-export default function AddProjectCard() {
+import { toast } from '@renderer/hooks/use-toast'
+import { useNavigate } from 'react-router-dom'
+import { projectContext } from '@renderer/contexts/project'
+
+export default function AddProjectCard({ onProjectCreated }: { onProjectCreated?: () => void }) {
   const [projectTitle, setProjectTitle] = React.useState('')
   const [open, setOpen] = React.useState(false)
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isLoading, setIsLoading] = React.useState(false)
+  const navigate = useNavigate()
+  const { project, setProject } = useContext(projectContext)
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle project creation logic here
-    console.log('New project:', projectTitle)
-    setOpen(false)
-    setProjectTitle('')
+    setIsLoading(true)
+
+    try {
+      const response = await fetch('http://localhost:3000/api/projects', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({ title: projectTitle })
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to create project')
+      }
+      const data = await response.json()
+      setProject(data)
+      toast({
+        title: 'Project created successfully!',
+        description: `${projectTitle} is now ready for collaboration.`
+      })
+      console.log("1");
+      setTimeout(() => {
+        navigate('/editor')
+      }, 1000)
+      setOpen(false)
+      setProjectTitle('')
+      if (onProjectCreated) onProjectCreated()
+    } catch (err) {
+      toast({
+        variant: 'destructive',
+        title: 'Project creation failed',
+        description: err instanceof Error ? err.message : 'Please try again later'
+      })
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -60,10 +98,24 @@ export default function AddProjectCard() {
             />
           </div>
           <div className="flex justify-end gap-2">
-            <Button variant="outline" type="button" onClick={() => setOpen(false)}>
+            <Button
+              variant="outline"
+              type="button"
+              onClick={() => setOpen(false)}
+              disabled={isLoading}
+            >
               Cancel
             </Button>
-            <Button type="submit">Create Project</Button>
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                'Create Project'
+              )}
+            </Button>
           </div>
         </form>
       </DialogContent>

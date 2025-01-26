@@ -4,6 +4,7 @@ import { AuthenticationRoutes } from './AuthRoutes'
 import { EditorRoutes } from './EditorRoutes'
 import { DashboardRoutes } from './DashboardRoutes'
 import { ProtectedRoutes } from './ProtectedRoutes'
+import { UserProfileRoutes } from './UserProfile'
 export default function index() {
   return useRoutes([
     {
@@ -11,6 +12,7 @@ export default function index() {
       element: <Navigate to="/sign-in" replace />
     },
     AuthenticationRoutes,
-    ProtectedRoutes
+    ProtectedRoutes,
+    UserProfileRoutes
   ])
 }

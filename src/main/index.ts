@@ -10,8 +10,6 @@ function createWindow(): void {
     width: 350,
     height: 580,
     show: false,
-    titleBarStyle: 'hidden',
-    titleBarOverlay: true,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
@@ -53,14 +51,46 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  let isResizing = false
-
   ipcMain.on('window-change', async (event, { width, height }) => {
     const window = BrowserWindow.getFocusedWindow()
     if (!window) return
     window.setSize(width, height)
+    window.center()
   })
 
+  ipcMain.on('signOut', () => {
+    const oldWindow = BrowserWindow.getFocusedWindow()
+    if (!oldWindow) return
+    const newWindow = new BrowserWindow({
+      width: 350,
+      height: 580,
+      show: false,
+      autoHideMenuBar: true,
+      ...(process.platform === 'linux' ? { icon } : {}),
+      webPreferences: {
+        preload: join(__dirname, '../preload/index.js'),
+        sandbox: false
+      }
+    })
+
+    newWindow.on('ready-to-show', () => {
+      oldWindow.destroy()
+      newWindow.show()
+      newWindow.center()
+    })
+    newWindow.webContents.setWindowOpenHandler((details) => {
+      shell.openExternal(details.url)
+      return { action: 'deny' }
+    })
+
+    // HMR for renderer base on electron-vite cli.
+    // Load the remote URL for development or the local html file for production.
+    if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+      newWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
+    } else {
+      newWindow.loadFile(join(__dirname, '../renderer/index.html'))
+    }
+  })
   createWindow()
 
   app.on('activate', function () {
