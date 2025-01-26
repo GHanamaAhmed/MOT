@@ -2,13 +2,16 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import { dialog } from 'electron/main'
 
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 1100,
-    height: 670,
+    width: 350,
+    height: 580,
     show: false,
+    titleBarStyle: 'hidden',
+    titleBarOverlay: true,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
@@ -50,8 +53,13 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  // IPC test
-  ipcMain.on('ping', () => console.log('pong'))
+  let isResizing = false
+
+  ipcMain.on('window-change', async (event, { width, height }) => {
+    const window = BrowserWindow.getFocusedWindow()
+    if (!window) return
+    window.setSize(width, height)
+  })
 
   createWindow()
 

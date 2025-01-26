@@ -1,9 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ['./src/renderer/**/*.{js,ts,jsx,tsx}'],
+  content: ['./src/renderer/**/*.{js,ts,jsx,tsx}', './node_modules/@clerk/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       colors: {
+        clerk: '#f8fafc', // Clerk's default background color
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',

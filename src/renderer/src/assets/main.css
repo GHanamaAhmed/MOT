@@ -1,6 +1,77 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+html,
+body,
+#root {
+  background: #f8fafc; /* Clerk's background color */
+  margin: 0;
+  padding: 0;
+}
+
+.cl-internal-phfxlr {
+  width: 100%;
+  height: 100%;
+}
+.cl-internal-7hb1uf {
+  max-width: none;
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  border-style: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.pageContainer {
+  height: 100% !important;
+  width: 100% !important;
+  padding-top: 0 !important;
+}
+.componentContainer {
+  width: 100% !important;
+}
+.cl-internal-phfxlr {
+  width: 100% !important;
+}
+.cl-internal-7hb1uf {
+  max-width: none !important;
+  width: 100% !important;
+  border-radius: 0 !important;
+  border-width: 0px !important;
+  box-shadow: none !important;
+  border-style: none;
+}
+
+/* clerk-styles.css */
+.clerk-auth-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--clerk-background) !important;
+}
+
+.cl-card {
+  width: 100% !important;
+  max-width: none !important;
+  height: auto !important;
+  min-height: 100% !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+
+.cl-formButtonPrimary {
+  width: 100% !important;
+}
+
+.cl-socialButtonsBlockButton {
+  width: 100% !important;
+  max-width: 400px !important;
+  margin: 0 auto !important;
+}
 
 @layer base {
   :root {
@@ -24,6 +95,14 @@
     --destructive-foreground: 210 40% 98%;
     --ring: 215 20.2% 65.1%;
     --radius: 0.5rem;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
@@ -46,6 +125,14 @@
     --destructive: 0 63% 31%;
     --destructive-foreground: 210 40% 98%;
     --ring: 216 34% 17%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
 

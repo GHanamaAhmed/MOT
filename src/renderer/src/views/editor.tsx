@@ -1,4 +1,5 @@
-import { useEffect } from 'react'
+import { useEffect, memo } from 'react'
+import { useLocation } from 'react-router-dom'
 import {
   DefaultStylePanel,
   DefaultStylePanelContent,
@@ -15,15 +16,17 @@ function Editor(): JSX.Element {
   return <CustomUi />
 }
 
-export default Editor
+export default memo(Editor)
 
 // [2]
 const CustomUi = track(() => {
   const editor = useEditor()
   const tools = useTools()
+  const { pathname } = useLocation()
 
   const styles = useRelevantStyles()
   useEffect(() => {
+    localStorage.setItem('pathname', pathname)
     const handleKeyUp = (e: KeyboardEvent) => {
       switch (e.key) {
         case 'Delete':
@@ -33,12 +36,11 @@ const CustomUi = track(() => {
         }
       }
     }
-
     window.addEventListener('keyup', handleKeyUp)
     return () => {
       window.removeEventListener('keyup', handleKeyUp)
     }
-  })
+  }, [])
 
   return (
     <>
@@ -49,12 +51,12 @@ const CustomUi = track(() => {
       </div> */}
       <div className="absolute left-1/2 -translate-x-1/2 top-8">
         <DefaultToolbar>
-          <TldrawUiMenuItem {...tools['select'] }  />
+          <TldrawUiMenuItem {...tools['select']} />
           <TldrawUiMenuItem {...tools['hand']} />
           <TldrawUiMenuItem {...tools['eraser']} />
           <TldrawUiMenuItem {...tools['ellipse']} label={'Procedure'} />
-          <TldrawUiMenuItem {...tools['rectangle']}label={'Concept'}  />
-          <TldrawUiMenuItem {...tools['hexagon']} label={"Princip"}/>
+          <TldrawUiMenuItem {...tools['rectangle']} label={'Concept'} />
+          <TldrawUiMenuItem {...tools['hexagon']} label={'Princip'} />
           <TldrawUiMenuItem {...tools['arrow']} />
           <TldrawUiButton
             type="tool"
