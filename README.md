@@ -1,4 +1,4 @@
-# MOT - Collaborative Whiteboard Application
+# MOT - Modeling by Object Types
 
 ![Electron](https://img.shields.io/badge/Electron-47848F?style=for-the-badge&logo=Electron&logoColor=white)
 ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
@@ -6,14 +6,14 @@
 ![Clerk](https://img.shields.io/badge/Clerk-Auth-8A2BE2)
 ![tldraw](https://img.shields.io/badge/tldraw-Editor-4BC0F0)
 
-A modern desktop application combining secure authentication, collaborative whiteboarding, and project management capabilities.
+A desktop application for object type modeling and diagramming (MOT = _Modélisation par Objets Types_) with secure authentication and GitHub integration.
 
 ## Features
 
 - 🔐 **Secure Authentication** with Clerk
-- 🎨 **Interactive Whiteboard** using tldraw.dev
+- 🎨 **Object Modeling** using tldraw.dev
 - 📂 **Project Management** (Full CRUD Operations)
-- 🔄 **GitHub Integration** for project synchronization
+- 💾 **GitHub Storage** for project persistence
 - 🖥️ **Cross-Platform** (Windows, macOS, Linux)
 - 🧩 **Modular Architecture** with Electron + React
 - 🎨 **Tailwind CSS** with animated components
@@ -38,7 +38,7 @@ npm install
 
 # Set up environment variables
 cp .env.example .env
-# Update Clerk keys in .env file
+# Update Clerk publishable key in .env file
 ```
 
 ## Development
@@ -80,7 +80,7 @@ mot/
 │   ├── main/          # Electron main process
 │   ├── renderer/      # React components
 │   └── preload/       # IPC communication
-├── resources/            # Static assets
+├── resources/         # Static assets
 ├── types/             # TypeScript definitions
 └── electron.vite.config.ts # Build configuration
 ```
@@ -88,7 +88,7 @@ mot/
 ## Key Technologies
 
 - **Authentication**: Clerk React SDK
-- **Whiteboarding**: tldraw v3.4+
+- **Diagramming**: tldraw v3.4+
 - **State Management**: React Context API
 - **Routing**: React Router v6
 - **UI Components**: Shadcn
@@ -97,16 +97,16 @@ mot/
 
 ## CRUD Operations
 
-Manage projects and accounts through:
-- **Create**: New projects/documents
+Manage modeling projects through:
+- **Create**: New object type models
 - **Read**: Project listings and details
-- **Update**: Edit existing content
-- **Delete**: Remove projects/accounts
-- **Sync**: GitHub repository integration
+- **Update**: Modify existing diagrams
+- **Delete**: Remove projects
+- **Store/Retrieve**: GitHub repository integration
 
 ## Environment Configuration
 
-Required `.env` variables:
+Required `.env` variable:
 ```ini
 VITE_CLERK_PUBLISHABLE_KEY=your_publishable_key
 ```
@@ -126,6 +126,9 @@ The backend API for this project is available at:
 
 Please follow [Conventional Commits](https://www.conventionalcommits.org/) guidelines.
 
+## License
+
+[MIT License](LICENSE)
 
 ---
 
