@@ -16,7 +16,7 @@ A desktop application for object type modeling and diagramming (MOT = _Modélisa
 - 💾 **GitHub Storage** for project persistence
 - 🖥️ **Cross-Platform** (Windows, macOS, Linux)
 - 🧩 **Modular Architecture** with Electron + React
-- 🎨 **Tailwind CSS** with animated components
+- 🎨 **Tailwind CSS** with Shadcn components
 - 🛠 **Type Safety** with TypeScript
 
 ## Prerequisites
@@ -126,9 +126,6 @@ The backend API for this project is available at:
 
 Please follow [Conventional Commits](https://www.conventionalcommits.org/) guidelines.
 
-## License
-
-[MIT License](LICENSE)
 
 ---
 
